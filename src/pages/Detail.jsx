@@ -54,7 +54,6 @@ export default function Detail() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-64 md:-mt-80">
         <div className="flex flex-col md:flex-row gap-8 md:gap-12">
-          
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -67,7 +66,6 @@ export default function Detail() {
                 <span className="text-sm font-bold text-white">{anime.score}</span>
               </div>
             </div>
-            
             <button className="w-full mt-6 flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-400 hover:to-cyan-400 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105">
               <Play fill="currentColor" size={20} /> Mulai Menonton
             </button>
@@ -87,7 +85,6 @@ export default function Detail() {
                   {anime.japanese}
                 </h2>
               )}
-              
               <div className="flex flex-wrap gap-2 mb-8">
                 {anime.genreList?.map((genre) => (
                   <span key={genre.genreId} className="px-3 py-1 text-xs font-semibold text-slate-200 bg-white/5 border border-white/10 rounded-lg backdrop-blur-sm">
@@ -167,9 +164,7 @@ export default function Detail() {
 
         {anime.recommendedAnimeList?.length > 0 && (
           <section className="mt-20">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-white">Rekomendasi Serupa</h3>
-            </div>
+            <h3 className="text-2xl font-bold text-white mb-6">Rekomendasi Serupa</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {anime.recommendedAnimeList.map((rec) => (
                 <Link to={`/anime/${rec.animeId}`} key={rec.animeId}>
@@ -194,5 +189,4 @@ export default function Detail() {
       </main>
     </div>
   );
-}
-                        
+}        
