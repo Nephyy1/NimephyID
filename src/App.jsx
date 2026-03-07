@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Search, Bell, User, Menu, X } from 'lucide-react';
-import Home from './pages/Home';
+import Home from './Home';
 import Detail from './pages/Detail';
 
 function Navbar() {
