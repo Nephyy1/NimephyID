@@ -4,6 +4,7 @@ import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CalendarDays, T
 import Home from './Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
+import Watch from './pages/Watch';
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -190,6 +191,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/anime/:slug" element={<Detail />} />
+            <Route path="/episode/:episodeId" element={<Watch />} />
             <Route path="/drama" element={<Drama />} />
             <Route path="/jadwal" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Jadwal Sedang Dikembangkan</div>} />
             <Route path="/trending" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Trending Sedang Dikembangkan</div>} />
@@ -199,4 +201,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-                        
