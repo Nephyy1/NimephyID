@@ -55,20 +55,20 @@ function Navbar() {
   const navLinks = [
     { name: 'Home', path: '/', icon: <MonitorPlay size={20} /> },
     { name: 'Semua Anime', path: '/all', icon: <Library size={20} /> },
-    { name: 'Donghua', path: '/donghua', icon: <CloudLightning size={20} /> },
-    { name: 'Tamat', path: '/tamat', icon: <CheckCircle2 size={20} /> },
     { name: 'Genres', path: '/genres', icon: <LayoutGrid size={20} /> },
+    { name: 'Tamat', path: '/tamat', icon: <CheckCircle2 size={20} /> },
+    { name: 'Donghua', path: '/donghua', icon: <CloudLightning size={20} /> },
     { name: 'Drama', path: '/drama', icon: <Clapperboard size={20} /> }
   ];
 
   return (
     <>
-      <nav className={`sticky top-0 z-50 w-full transition-colors duration-300 border-b ${
+      <nav className={`fixed top-0 z-50 w-full transition-colors duration-300 ${
         scrolled || isMobileMenuOpen
-          ? 'bg-slate-950/80 backdrop-blur-xl border-white/10 shadow-2xl shadow-slate-900/50' 
-          : 'bg-transparent border-transparent'
+          ? 'bg-slate-950/90 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-slate-900/50' 
+          : 'bg-gradient-to-b from-black/80 to-transparent border-transparent'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-50">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-50">
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link to="/" className="flex-shrink-0 flex flex-col z-50" onClick={() => setIsMobileMenuOpen(false)}>
               <span className="text-2xl md:text-3xl font-black tracking-tighter bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-transparent leading-none drop-shadow-sm">
@@ -256,3 +256,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+      
