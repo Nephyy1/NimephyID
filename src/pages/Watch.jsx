@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, Download, ChevronLeft, ChevronRight, ListVideo, MonitorPlay, Server, ArrowLeft } from 'lucide-react';
+import { Play, Download, ChevronLeft, ChevronRight, ListVideo, MonitorPlay, Server, ArrowLeft, AlertCircle } from 'lucide-react';
 
 export default function Watch() {
   const { episodeId } = useParams();
@@ -10,10 +10,14 @@ export default function Watch() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('streaming');
   const [iframeUrl, setIframeUrl] = useState('');
+  const [isSwitchingServer, setIsSwitchingServer] = useState(false);
+  const [serverError, setServerError] = useState('');
+  const [activeServerId, setActiveServerId] = useState('');
 
   useEffect(() => {
     const fetchEpisodeData = async () => {
       setIsLoading(true);
+      setServerError('');
       try {
         const response = await fetch(`https://www.sankavollerei.com/anime/episode/${episodeId}`);
         const result = await response.json();
@@ -21,6 +25,7 @@ export default function Watch() {
         if (result.status === 'success') {
           setData(result.data);
           setIframeUrl(result.data.defaultStreamingUrl);
+          setActiveServerId('default');
         }
       } catch (error) {
         console.error(error);
@@ -32,6 +37,36 @@ export default function Watch() {
     fetchEpisodeData();
     window.scrollTo(0, 0);
   }, [episodeId]);
+
+  const handleServerChange = async (serverId) => {
+    setIsSwitchingServer(true);
+    setServerError('');
+    setActiveServerId(serverId);
+    
+    try {
+      const response = await fetch(`https://www.sankavollerei.com/anime/server/${serverId}`);
+      const result = await response.json();
+
+      if (result.ok === false || result.statusCode === 404 || !result.data) {
+        setServerError(result.message || "Server ini sedang tidak tersedia atau telah dihapus.");
+        setIframeUrl('');
+        return;
+      }
+
+      const newUrl = result.data.url || result.data;
+      if (typeof newUrl === 'string') {
+        setIframeUrl(newUrl);
+      } else {
+        setServerError("Format URL dari server tidak dikenali.");
+        setIframeUrl('');
+      }
+    } catch (err) {
+      setServerError("Gagal menghubungi penyedia server.");
+      setIframeUrl('');
+    } finally {
+      setIsSwitchingServer(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -57,16 +92,32 @@ export default function Watch() {
         <div className="flex-1">
           <div className="bg-slate-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-900/20">
             <div className="aspect-video w-full bg-black relative">
-              {iframeUrl ? (
+              {isSwitchingServer ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm z-10 gap-3">
+                  <div className="w-10 h-10 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
+                  <p className="text-cyan-400 font-semibold animate-pulse">Menyambungkan ke Server...</p>
+                </div>
+              ) : null}
+
+              {serverError ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-0 p-6 text-center">
+                  <AlertCircle size={48} className="text-red-500 mb-4 opacity-80" />
+                  <h3 className="text-xl font-bold text-white mb-2">Streaming Gagal</h3>
+                  <p className="text-slate-400 mb-4 max-w-md">{serverError}</p>
+                  <p className="text-sm text-cyan-400 font-semibold bg-cyan-950/30 px-4 py-2 rounded-lg border border-cyan-500/20">
+                    Silakan pilih server resolusi lain di bawah ini.
+                  </p>
+                </div>
+              ) : iframeUrl ? (
                 <iframe 
                   src={iframeUrl} 
                   title="Video Player" 
-                  className="w-full h-full absolute top-0 left-0" 
+                  className="w-full h-full absolute top-0 left-0 z-0" 
                   allowFullScreen 
                   frameBorder="0"
                 ></iframe>
               ) : (
-                <div className="flex items-center justify-center h-full text-slate-500">
+                <div className="flex items-center justify-center h-full text-slate-500 z-0">
                   <MonitorPlay size={48} className="opacity-50" />
                 </div>
               )}
@@ -144,14 +195,22 @@ export default function Watch() {
                     </h3>
                     <div className="flex flex-wrap gap-3">
                       {quality.serverList?.length > 0 ? (
-                        quality.serverList.map((srv, srvIdx) => (
-                          <button 
-                            key={srvIdx}
-                            className="px-4 py-2 text-sm bg-slate-900 border border-white/10 hover:border-cyan-500/50 hover:bg-white/5 rounded-lg text-slate-300 hover:text-white transition-colors capitalize shadow-inner"
-                          >
-                            {srv.title}
-                          </button>
-                        ))
+                        quality.serverList.map((srv, srvIdx) => {
+                          const isActive = activeServerId === srv.serverId;
+                          return (
+                            <button 
+                              key={srvIdx}
+                              onClick={() => handleServerChange(srv.serverId)}
+                              className={`px-4 py-2 text-sm border rounded-lg transition-all capitalize shadow-inner ${
+                                isActive
+                                  ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+                                  : 'bg-slate-900 border-white/10 hover:border-cyan-500/50 hover:bg-white/5 text-slate-300 hover:text-white'
+                              }`}
+                            >
+                              {srv.title}
+                            </button>
+                          );
+                        })
                       ) : (
                         <span className="text-sm text-slate-500 italic">Server tidak tersedia</span>
                       )}
@@ -254,4 +313,5 @@ export default function Watch() {
       `}</style>
     </div>
   );
-}       
+}
+  
