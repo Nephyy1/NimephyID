@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CheckCircle2, LayoutGrid, Library } from 'lucide-react';
 
-// Mengimpor semua halaman
 import Home from './Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
@@ -78,7 +77,6 @@ function Navbar() {
 
             <div className="hidden lg:flex items-center space-x-1 absolute left-1/2 transform -translate-x-1/2 bg-white/5 backdrop-blur-lg border border-white/10 px-3 py-2 rounded-full shadow-xl">
               {navLinks.map((item) => {
-                // Logika Active State khusus
                 const isHome = item.path === '/';
                 const isActive = isHome ? location.pathname === '/' : location.pathname.startsWith(item.path);
                 
@@ -233,7 +231,7 @@ export default function App() {
             <Route path="/anime/:slug" element={<Detail />} />
             <Route path="/episode/:episodeId" element={<Watch />} />
             <Route path="/drama" element={<Drama />} />
-            <Route path="/drama/:bookId/:episodeId" element={<DramaWatch />} />
+            <Route path="/drama/:slug/:index" element={<DramaWatch />} />
             <Route path="/tamat" element={<Tamat />} />
             <Route path="/genres" element={<Genres />} />
             <Route path="/genre/:genreId" element={<GenreDetail />} />
