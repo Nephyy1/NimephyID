@@ -8,6 +8,7 @@ import Watch from './pages/Watch';
 import SearchPage from './pages/Search';
 import Tamat from './pages/Tamat';
 import Genres from './pages/Genres';
+import GenreDetail from './pages/GenreDetail';
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -75,7 +76,7 @@ function Navbar() {
                 const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
                 const isDrama = item.name === 'Drama';
                 const isTamat = item.name === 'Tamat';
-                const isGenres = item.name === 'Genres';
+                const isGenres = item.name === 'Genres' || location.pathname.startsWith('/genre/');
                 
                 let activeColorClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]';
                 if (isDrama) activeColorClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-fuchsia-400 border border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.15)]';
@@ -160,7 +161,7 @@ function Navbar() {
             const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
             const isDrama = item.name === 'Drama';
             const isTamat = item.name === 'Tamat';
-            const isGenres = item.name === 'Genres';
+            const isGenres = item.name === 'Genres' || location.pathname.startsWith('/genre/');
 
             let activeClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-cyan-500/50 shadow-[0_0_20px_rgba(34,211,238,0.15)]';
             let iconColor = 'text-cyan-400';
@@ -229,6 +230,7 @@ export default function App() {
             <Route path="/drama" element={<Drama />} />
             <Route path="/tamat" element={<Tamat />} />
             <Route path="/genres" element={<Genres />} />
+            <Route path="/genre/:genreId" element={<GenreDetail />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="/jadwal" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Jadwal Sedang Dikembangkan</div>} />
             <Route path="/trending" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Trending Sedang Dikembangkan</div>} />
@@ -238,4 +240,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
-      
+              
