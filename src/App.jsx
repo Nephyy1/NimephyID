@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CheckCircle2, LayoutGrid, Library } from 'lucide-react';
+import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CheckCircle2, LayoutGrid, Library, CloudLightning } from 'lucide-react';
 
 import Home from './Home';
 import Detail from './pages/Detail';
@@ -13,6 +13,9 @@ import Genres from './pages/Genres';
 import GenreDetail from './pages/GenreDetail';
 import Batch from './pages/Batch';
 import AllAnime from './pages/AllAnime';
+import Donghua from './pages/Donghua';
+import DonghuaDetail from './pages/DonghuaDetail';
+import DonghuaWatch from './pages/DonghuaWatch';
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -52,6 +55,7 @@ function Navbar() {
   const navLinks = [
     { name: 'Home', path: '/', icon: <MonitorPlay size={20} /> },
     { name: 'Semua Anime', path: '/all', icon: <Library size={20} /> },
+    { name: 'Donghua', path: '/donghua', icon: <CloudLightning size={20} /> },
     { name: 'Tamat', path: '/tamat', icon: <CheckCircle2 size={20} /> },
     { name: 'Genres', path: '/genres', icon: <LayoutGrid size={20} /> },
     { name: 'Drama', path: '/drama', icon: <Clapperboard size={20} /> }
@@ -81,11 +85,13 @@ function Navbar() {
                 const isActive = isHome ? location.pathname === '/' : location.pathname.startsWith(item.path);
                 
                 const isDrama = item.name === 'Drama';
+                const isDonghua = item.name === 'Donghua';
                 const isTamat = item.name === 'Tamat';
                 const isGenres = item.name === 'Genres';
                 
                 let activeColorClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]';
                 if (isDrama) activeColorClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-fuchsia-400 border border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.15)]';
+                if (isDonghua) activeColorClass = 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]';
                 if (isTamat) activeColorClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.15)]';
                 if (isGenres) activeColorClass = 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-400 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]';
 
@@ -164,6 +170,7 @@ function Navbar() {
             const isActive = isHome ? location.pathname === '/' : location.pathname.startsWith(item.path);
             
             const isDrama = item.name === 'Drama';
+            const isDonghua = item.name === 'Donghua';
             const isTamat = item.name === 'Tamat';
             const isGenres = item.name === 'Genres';
 
@@ -173,6 +180,9 @@ function Navbar() {
             if (isDrama) {
               activeClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-white border border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.15)]';
               iconColor = 'text-fuchsia-400';
+            } else if (isDonghua) {
+              activeClass = 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-white border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.15)]';
+              iconColor = 'text-emerald-400';
             } else if (isTamat) {
               activeClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-white border border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.15)]';
               iconColor = 'text-green-400';
@@ -230,6 +240,9 @@ export default function App() {
             <Route path="/all" element={<AllAnime />} />
             <Route path="/anime/:slug" element={<Detail />} />
             <Route path="/episode/:episodeId" element={<Watch />} />
+            <Route path="/donghua" element={<Donghua />} />
+            <Route path="/donghua/detail/:slug" element={<DonghuaDetail />} />
+            <Route path="/donghua/episode/:episodeSlug" element={<DonghuaWatch />} />
             <Route path="/drama" element={<Drama />} />
             <Route path="/drama/:slug/:index" element={<DramaWatch />} />
             <Route path="/tamat" element={<Tamat />} />
