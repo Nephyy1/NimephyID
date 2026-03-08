@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CalendarDays, TrendingUp } from 'lucide-react';
-import Home from './pages/Home';
+import Home from './Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
 import Watch from './pages/Watch';
