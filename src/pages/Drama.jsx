@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Clapperboard, Search, Flame, Play, AlertCircle, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clapperboard, Search, Flame, Play, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Drama() {
   const [dramas, setDramas] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  
-  // State untuk mengontrol mode tampilan: 'latest', 'trending', atau 'search'
   const [mode, setMode] = useState('latest'); 
   const [page, setPage] = useState(1);
 
-  // Fungsi Fetch berdasarkan Mode
   useEffect(() => {
     if (mode === 'latest') {
       fetchLatest(page);
-    } else if (mode === 'trending') {
-      fetchTrending();
+    } else if (mode === 'popular') {
+      fetchPopular(page);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [mode, page]);
@@ -25,7 +22,7 @@ export default function Drama() {
   const fetchLatest = async (pageNum) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`https://www.sankavollerei.com/anime/dramabox/latest?page=${pageNum}`);
+      const response = await fetch(`https://www.sankavollerei.com/anime/drachin/latest?page=${pageNum}`);
       const result = await response.json();
       if (result.status === 'success' && result.data) {
         setDramas(result.data);
@@ -33,16 +30,16 @@ export default function Drama() {
         setDramas([]);
       }
     } catch (error) {
-      console.error("Gagal menarik data terbaru:", error);
+      setDramas([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fetchTrending = async () => {
+  const fetchPopular = async (pageNum) => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://www.sankavollerei.com/anime/dramabox/trending');
+      const response = await fetch(`https://www.sankavollerei.com/anime/drachin/popular?page=${pageNum}`);
       const result = await response.json();
       if (result.status === 'success' && result.data) {
         setDramas(result.data);
@@ -50,7 +47,7 @@ export default function Drama() {
         setDramas([]);
       }
     } catch (error) {
-      console.error("Gagal menarik data trending:", error);
+      setDramas([]);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +64,7 @@ export default function Drama() {
     setMode('search');
     setIsLoading(true);
     try {
-      const response = await fetch(`https://www.sankavollerei.com/anime/dramabox/search?q=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(`https://www.sankavollerei.com/anime/drachin/search/${encodeURIComponent(searchQuery)}`);
       const result = await response.json();
       if (result.status === 'success' && result.data) {
         setDramas(result.data);
@@ -75,20 +72,20 @@ export default function Drama() {
         setDramas([]);
       }
     } catch (error) {
-      console.error("Gagal mencari drama:", error);
+      setDramas([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Mengatur teks judul section
   let sectionTitle = "";
   let sectionIcon = null;
+  
   if (mode === 'latest') {
     sectionTitle = "Update Terbaru";
     sectionIcon = <Sparkles className="text-fuchsia-400" size={24} />;
-  } else if (mode === 'trending') {
-    sectionTitle = "Trending Top 10";
+  } else if (mode === 'popular') {
+    sectionTitle = "Sedang Populer";
     sectionIcon = <Flame className="text-orange-500" size={24} />;
   } else {
     sectionTitle = `Hasil Pencarian: "${searchQuery}"`;
@@ -97,8 +94,6 @@ export default function Drama() {
 
   return (
     <div className="pb-24 pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-screen">
-      
-      {/* Header & Search Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-white/10 pb-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-black text-white mb-2 flex items-center gap-3">
@@ -106,7 +101,7 @@ export default function Drama() {
             Drama Asia
           </h1>
           <p className="text-slate-400">
-            Tonton ribuan koleksi drama pendek (Dramabox) terbaru dan terpopuler.
+            Tonton ribuan koleksi drama pendek terbaru dan terpopuler.
           </p>
         </div>
 
@@ -118,7 +113,7 @@ export default function Drama() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari drama CEO, Romantis..."
+            placeholder="Cari judul drama..."
             className="w-full bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-2xl pl-11 pr-24 py-3.5 focus:outline-none focus:border-fuchsia-500/50 focus:ring-1 focus:ring-fuchsia-500/50 text-white placeholder-slate-500 shadow-inner"
           />
           <button 
@@ -131,7 +126,6 @@ export default function Drama() {
         </form>
       </div>
 
-      {/* Tabs Navigation (Hanya muncul jika bukan mode search) */}
       {mode !== 'search' && (
         <div className="flex items-center gap-3 mb-8 bg-white/5 p-1.5 rounded-2xl border border-white/10 w-fit backdrop-blur-md">
           <button
@@ -145,19 +139,18 @@ export default function Drama() {
             <Sparkles size={16} /> Terbaru
           </button>
           <button
-            onClick={() => setMode('trending')}
+            onClick={() => { setMode('popular'); setPage(1); }}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
-              mode === 'trending' 
+              mode === 'popular' 
                 ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30' 
                 : 'text-slate-400 hover:text-white hover:bg-white/10'
             }`}
           >
-            <Flame size={16} /> Trending
+            <Flame size={16} /> Populer
           </button>
         </div>
       )}
 
-      {/* Mode Title & Back Button (Jika Search) */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-2">
           {sectionIcon}
@@ -174,81 +167,52 @@ export default function Drama() {
         )}
       </div>
 
-      {/* Grid Konten */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-32 text-fuchsia-400 gap-4">
           <div className="w-12 h-12 border-4 border-fuchsia-500/30 border-t-fuchsia-500 rounded-full animate-spin"></div>
-          <p className="font-semibold tracking-wide animate-pulse">Menyiapkan Daftar Drama...</p>
         </div>
       ) : dramas.length > 0 ? (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-            {dramas.map((drama, index) => {
-              const isAvailable = drama.bookId !== null;
-              
-              const CardContent = (
+            {dramas.map((drama, index) => (
+              <Link 
+                to={`/drama/${drama.slug}/1`} 
+                key={drama.slug || index}
+              >
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className={`group relative rounded-2xl overflow-hidden bg-slate-900 shadow-xl shadow-slate-950/50 border border-transparent transition-all duration-300 flex flex-col h-full ${
-                    isAvailable ? 'hover:border-fuchsia-500/30 cursor-pointer' : 'opacity-60 grayscale'
-                  }`}
+                  className="group relative rounded-2xl overflow-hidden bg-slate-900 shadow-xl shadow-slate-950/50 border border-transparent hover:border-fuchsia-500/30 transition-all duration-300 flex flex-col h-full cursor-pointer"
                 >
-                  {drama.rank && (
-                    <div className="absolute top-2 left-2 z-10 bg-orange-600 backdrop-blur-md border border-white/20 rounded-lg px-2.5 py-1 flex items-center gap-1 shadow-lg">
-                      <span className="text-xs font-black text-white">#{drama.rank}</span>
+                  {drama.episode_info && (
+                    <div className="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg px-2 py-1 shadow-lg">
+                      <span className="text-[10px] font-bold text-fuchsia-300 uppercase tracking-wider">{drama.episode_info}</span>
                     </div>
                   )}
-                  
-                  <div className="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg px-2 py-1 shadow-lg">
-                    <span className="text-[10px] font-bold text-fuchsia-300 uppercase tracking-wider">{drama.total_episode}</span>
-                  </div>
 
                   <div className="aspect-[3/4] relative w-full overflow-hidden shrink-0 bg-slate-800">
-                    <img src={drama.cover} alt={drama.judul} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
+                    <img src={drama.poster} alt={drama.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-                    
-                    {isAvailable ? (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="w-12 h-12 bg-fuchsia-500/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(217,70,239,0.5)] transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                          <Play fill="white" size={20} className="ml-1 text-white" />
-                        </div>
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="w-12 h-12 bg-fuchsia-500/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(217,70,239,0.5)] transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                        <Play fill="white" size={20} className="ml-1 text-white" />
                       </div>
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                         <span className="bg-red-500/90 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 backdrop-blur-md">
-                           <AlertCircle size={12} /> ID Error
-                         </span>
-                      </div>
-                    )}
+                    </div>
                   </div>
 
                   <div className="flex-1 bg-white/5 backdrop-blur-sm p-4 flex flex-col justify-between group-hover:bg-fuchsia-950/20 transition-colors duration-300">
                     <h3 className="text-white font-bold text-sm leading-tight line-clamp-2 mb-2">
-                      {drama.judul}
+                      {drama.title}
                     </h3>
                     <div className="w-0 h-1 bg-gradient-to-r from-fuchsia-500 to-rose-500 mt-auto group-hover:w-full transition-all duration-500 rounded-full"></div>
                   </div>
                 </motion.div>
-              );
-
-              return isAvailable ? (
-                <Link 
-                  to={`/drama/${drama.bookId}/1`} 
-                  key={index}
-                  state={{ title: drama.judul }}
-                >
-                  {CardContent}
-                </Link>
-              ) : (
-                <div key={index}>{CardContent}</div>
-              );
-            })}
+              </Link>
+            ))}
           </div>
 
-          {/* Pagination (Hanya untuk Mode Latest) */}
-          {mode === 'latest' && (
+          {mode !== 'search' && (
             <div className="mt-16 flex items-center justify-center gap-4">
               <button
                 onClick={() => setPage(prev => Math.max(prev - 1, 1))}
@@ -282,10 +246,8 @@ export default function Drama() {
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <Clapperboard size={64} className="text-slate-600 mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Drama tidak ditemukan</h2>
-          <p className="text-slate-400">Coba gunakan kata kunci pencarian yang lain.</p>
         </div>
       )}
     </div>
   );
 }
-                            
