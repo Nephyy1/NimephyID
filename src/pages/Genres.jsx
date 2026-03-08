@@ -13,8 +13,8 @@ export default function Genres() {
       setIsLoading(true);
       setErrorMessage("");
       try {
-        // Proses menarik data dari API
-        const response = await fetch('https://www.sankavollerei.com/anime/genres');
+        // PERHATIKAN BARIS INI: Huruf 's' dihilangkan menjadi /anime/genre
+        const response = await fetch('https://www.sankavollerei.com/anime/genre');
         
         if (!response.ok) {
           throw new Error(`Gagal akses API (Status: ${response.status} ${response.statusText})`);
@@ -22,11 +22,10 @@ export default function Genres() {
 
         const result = await response.json();
         
-        // Memastikan struktur data sesuai dengan JSON yang Anda berikan
         if (result.status === 'success' && result.data && result.data.genreList) {
           setGenres(result.data.genreList);
         } else {
-          throw new Error("Data berhasil ditarik, tapi struktur JSON dari API tidak sesuai (genreList tidak ditemukan).");
+          throw new Error("Data berhasil ditarik, tapi struktur JSON tidak sesuai (genreList tidak ditemukan).");
         }
       } catch (error) {
         console.error("Error Detail:", error);
