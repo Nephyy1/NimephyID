@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CalendarDays, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CalendarDays, TrendingUp, CheckCircle2, LayoutGrid } from 'lucide-react';
 import Home from './Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
 import Watch from './pages/Watch';
 import SearchPage from './pages/Search';
 import Tamat from './pages/Tamat';
+import Genres from './pages/Genres';
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -46,8 +47,8 @@ function Navbar() {
   const navLinks = [
     { name: 'Home', path: '/', icon: <MonitorPlay size={20} /> },
     { name: 'Tamat', path: '/tamat', icon: <CheckCircle2 size={20} /> },
+    { name: 'Genres', path: '/genres', icon: <LayoutGrid size={20} /> },
     { name: 'Drama', path: '/drama', icon: <Clapperboard size={20} /> },
-    { name: 'Jadwal', path: '/jadwal', icon: <CalendarDays size={20} /> },
     { name: 'Trending', path: '/trending', icon: <TrendingUp size={20} /> }
   ];
 
@@ -74,10 +75,12 @@ function Navbar() {
                 const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
                 const isDrama = item.name === 'Drama';
                 const isTamat = item.name === 'Tamat';
+                const isGenres = item.name === 'Genres';
                 
                 let activeColorClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]';
                 if (isDrama) activeColorClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-fuchsia-400 border border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.15)]';
                 if (isTamat) activeColorClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.15)]';
+                if (isGenres) activeColorClass = 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-400 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]';
 
                 return (
                   <Link
@@ -157,6 +160,7 @@ function Navbar() {
             const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
             const isDrama = item.name === 'Drama';
             const isTamat = item.name === 'Tamat';
+            const isGenres = item.name === 'Genres';
 
             let activeClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-cyan-500/50 shadow-[0_0_20px_rgba(34,211,238,0.15)]';
             let iconColor = 'text-cyan-400';
@@ -167,6 +171,9 @@ function Navbar() {
             } else if (isTamat) {
               activeClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-white border border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.15)]';
               iconColor = 'text-green-400';
+            } else if (isGenres) {
+              activeClass = 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-white border border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)]';
+              iconColor = 'text-orange-400';
             }
 
             return (
@@ -221,6 +228,7 @@ export default function App() {
             <Route path="/episode/:episodeId" element={<Watch />} />
             <Route path="/drama" element={<Drama />} />
             <Route path="/tamat" element={<Tamat />} />
+            <Route path="/genres" element={<Genres />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="/jadwal" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Jadwal Sedang Dikembangkan</div>} />
             <Route path="/trending" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Trending Sedang Dikembangkan</div>} />
@@ -230,3 +238,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+      
