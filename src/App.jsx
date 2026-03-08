@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CalendarDays, TrendingUp } from 'lucide-react';
-import Home from './Home';
+import Home from './pages/Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
 import Watch from './pages/Watch';
+import SearchPage from './pages/Search';
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,6 +32,15 @@ function Navbar() {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search/${encodeURIComponent(searchQuery.trim())}`);
+      setIsMobileMenuOpen(false);
+      setSearchQuery('');
+    }
+  };
 
   const navLinks = [
     { name: 'Home', path: '/', icon: <MonitorPlay size={20} /> },
@@ -79,16 +91,18 @@ function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center space-x-4 lg:space-x-6 z-50">
-              <div className="relative group">
+              <form onSubmit={handleSearch} className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Search size={16} className="text-slate-400 group-focus-within:text-cyan-400 transition-colors" />
                 </div>
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari tontonan..."
                   className="bg-slate-900/50 backdrop-blur-md border border-white/10 text-sm rounded-full pl-11 pr-4 py-2.5 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 text-white placeholder-slate-500 transition-all w-48 lg:w-60 focus:w-64 lg:focus:w-80 shadow-inner"
                 />
-              </div>
+              </form>
 
               <button className="relative text-slate-300 hover:text-cyan-400 transition-colors p-2.5 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 backdrop-blur-sm shadow-lg">
                 <Bell size={18} strokeWidth={2.5} />
@@ -121,16 +135,18 @@ function Navbar() {
         <div className="absolute top-20 -left-20 w-72 h-72 bg-purple-600/20 rounded-full blur-[100px] pointer-events-none"></div>
         <div className="absolute bottom-20 -right-20 w-72 h-72 bg-cyan-600/20 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <div className="relative mb-8 z-10">
+        <form onSubmit={handleSearch} className="relative mb-8 z-10">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search size={20} className="text-slate-400" />
           </div>
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari anime atau drama..."
             className="w-full bg-white/5 backdrop-blur-xl border border-white/10 text-base rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 text-white placeholder-slate-400 shadow-xl"
           />
-        </div>
+        </form>
 
         <div className="flex flex-col space-y-4 flex-1 z-10">
           <p className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1 px-2">Menu Utama</p>
@@ -193,6 +209,7 @@ export default function App() {
             <Route path="/anime/:slug" element={<Detail />} />
             <Route path="/episode/:episodeId" element={<Watch />} />
             <Route path="/drama" element={<Drama />} />
+            <Route path="/search/:query" element={<SearchPage />} />
             <Route path="/jadwal" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Jadwal Sedang Dikembangkan</div>} />
             <Route path="/trending" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Trending Sedang Dikembangkan</div>} />
           </Routes>
