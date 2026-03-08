@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Jangan index halaman pencarian agar tidak dianggap spam oleh Google
+Disallow: /search/
+
+# Jika Anda nanti punya sitemap, ganti URL ini
+Sitemap: https://nimephy-id.vercel.app/sitemap.xml
