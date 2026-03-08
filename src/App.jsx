@@ -128,14 +128,14 @@ function Navbar() {
         </div>
       </nav>
 
-      <div className={`md:hidden fixed inset-0 w-full h-screen bg-slate-950/90 backdrop-blur-2xl transition-all duration-300 ease-in-out z-40 flex flex-col pt-24 px-6 pb-8 overflow-y-auto ${
+      <div className={`md:hidden fixed inset-0 w-full h-screen bg-slate-950/90 backdrop-blur-2xl transition-all duration-300 ease-in-out z-40 flex flex-col pt-24 px-6 pb-8 overflow-y-auto overflow-x-hidden ${
         isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
       }`}>
         
         <div className="absolute top-20 -left-20 w-72 h-72 bg-purple-600/20 rounded-full blur-[100px] pointer-events-none"></div>
         <div className="absolute bottom-20 -right-20 w-72 h-72 bg-cyan-600/20 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <form onSubmit={handleSearch} className="relative mb-8 z-10">
+        <form onSubmit={handleSearch} className="relative mb-8 z-10 w-full">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search size={20} className="text-slate-400" />
           </div>
@@ -148,7 +148,7 @@ function Navbar() {
           />
         </form>
 
-        <div className="flex flex-col space-y-4 flex-1 z-10">
+        <div className="flex flex-col space-y-4 flex-1 z-10 w-full">
           <p className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1 px-2">Menu Utama</p>
           {navLinks.map((item) => {
             const isActive = location.pathname === item.path;
@@ -159,7 +159,7 @@ function Navbar() {
                 key={item.name}
                 to={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center gap-4 text-lg font-bold px-6 py-4 rounded-2xl transition-all shadow-lg ${
+                className={`flex items-center gap-4 text-lg font-bold px-6 py-4 rounded-2xl transition-all shadow-lg w-full ${
                   isActive
                     ? isDrama
                       ? 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-white border border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.15)]'
@@ -176,8 +176,8 @@ function Navbar() {
           })}
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-8 flex items-center justify-between px-2 pb-4 z-10">
-          <div className="flex items-center gap-4 bg-white/5 px-4 py-3 rounded-2xl border border-white/10 backdrop-blur-md flex-1 mr-4">
+        <div className="mt-8 border-t border-white/10 pt-8 flex items-center justify-between px-2 pb-4 z-10 w-full">
+          <div className="flex items-center gap-4 bg-white/5 px-4 py-3 rounded-2xl border border-white/10 backdrop-blur-md flex-1 mr-4 overflow-hidden">
             <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-purple-500 to-cyan-500 p-[2px] shadow-lg shadow-cyan-500/20 shrink-0">
               <div className="h-full w-full bg-slate-900 rounded-full flex items-center justify-center">
                 <User size={18} className="text-slate-200" />
@@ -201,9 +201,9 @@ function Navbar() {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-purple-500/30 flex flex-col">
+      <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-purple-500/30 flex flex-col overflow-x-hidden w-full relative">
         <Navbar />
-        <div className="flex-1 relative z-10">
+        <div className="flex-1 relative z-10 w-full">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/anime/:slug" element={<Detail />} />
@@ -218,3 +218,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+            
