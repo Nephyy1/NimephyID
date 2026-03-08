@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 're
 import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CheckCircle2, LayoutGrid, Library } from 'lucide-react';
 
 // Mengimpor semua halaman
-import Home from './pages/Home';
+import Home from './Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
 import DramaWatch from './pages/DramaWatch';
