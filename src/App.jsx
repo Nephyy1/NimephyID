@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CalendarDays, TrendingUp } from 'lucide-react';
+import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CalendarDays, TrendingUp, CheckCircle2 } from 'lucide-react';
 import Home from './Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
 import Watch from './pages/Watch';
 import SearchPage from './pages/Search';
+import Tamat from './pages/Tamat';
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,6 +45,7 @@ function Navbar() {
 
   const navLinks = [
     { name: 'Home', path: '/', icon: <MonitorPlay size={20} /> },
+    { name: 'Tamat', path: '/tamat', icon: <CheckCircle2 size={20} /> },
     { name: 'Drama', path: '/drama', icon: <Clapperboard size={20} /> },
     { name: 'Jadwal', path: '/jadwal', icon: <CalendarDays size={20} /> },
     { name: 'Trending', path: '/trending', icon: <TrendingUp size={20} /> }
@@ -67,21 +69,22 @@ function Navbar() {
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center space-x-1 lg:space-x-4 absolute left-1/2 transform -translate-x-1/2 bg-white/5 backdrop-blur-lg border border-white/10 px-4 py-2 rounded-full shadow-xl">
+            <div className="hidden md:flex items-center space-x-1 lg:space-x-2 absolute left-1/2 transform -translate-x-1/2 bg-white/5 backdrop-blur-lg border border-white/10 px-4 py-2 rounded-full shadow-xl">
               {navLinks.map((item) => {
-                const isActive = location.pathname === item.path;
+                const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
                 const isDrama = item.name === 'Drama';
+                const isTamat = item.name === 'Tamat';
                 
+                let activeColorClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]';
+                if (isDrama) activeColorClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-fuchsia-400 border border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.15)]';
+                if (isTamat) activeColorClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.15)]';
+
                 return (
                   <Link
                     key={item.name}
                     to={item.path}
                     className={`text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full flex items-center gap-2 ${
-                      isActive
-                        ? isDrama 
-                          ? 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-fuchsia-400 border border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.15)]'
-                          : 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]'
-                        : 'text-slate-300 hover:text-white hover:bg-white/10 border border-transparent'
+                      isActive ? activeColorClass : 'text-slate-300 hover:text-white hover:bg-white/10 border border-transparent'
                     }`}
                   >
                     {item.name}
@@ -100,7 +103,7 @@ function Navbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari tontonan..."
-                  className="bg-slate-900/50 backdrop-blur-md border border-white/10 text-sm rounded-full pl-11 pr-4 py-2.5 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 text-white placeholder-slate-500 transition-all w-48 lg:w-60 focus:w-64 lg:focus:w-80 shadow-inner"
+                  className="bg-slate-900/50 backdrop-blur-md border border-white/10 text-sm rounded-full pl-11 pr-4 py-2.5 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 text-white placeholder-slate-500 transition-all w-48 lg:w-56 focus:w-64 lg:focus:w-72 shadow-inner"
                 />
               </form>
 
@@ -151,8 +154,20 @@ function Navbar() {
         <div className="flex flex-col space-y-4 flex-1 z-10 w-full">
           <p className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1 px-2">Menu Utama</p>
           {navLinks.map((item) => {
-            const isActive = location.pathname === item.path;
+            const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
             const isDrama = item.name === 'Drama';
+            const isTamat = item.name === 'Tamat';
+
+            let activeClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-cyan-500/50 shadow-[0_0_20px_rgba(34,211,238,0.15)]';
+            let iconColor = 'text-cyan-400';
+            
+            if (isDrama) {
+              activeClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-white border border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.15)]';
+              iconColor = 'text-fuchsia-400';
+            } else if (isTamat) {
+              activeClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-white border border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.15)]';
+              iconColor = 'text-green-400';
+            }
 
             return (
               <Link
@@ -160,14 +175,10 @@ function Navbar() {
                 to={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 text-lg font-bold px-6 py-4 rounded-2xl transition-all shadow-lg w-full ${
-                  isActive
-                    ? isDrama
-                      ? 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-white border border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.15)]'
-                      : 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-cyan-500/50 shadow-[0_0_20px_rgba(34,211,238,0.15)]'
-                    : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border border-white/10 backdrop-blur-md'
+                  isActive ? activeClass : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border border-white/10 backdrop-blur-md'
                 }`}
               >
-                <div className={`${isActive ? (isDrama ? 'text-fuchsia-400' : 'text-cyan-400') : 'text-slate-400'}`}>
+                <div className={`${isActive ? iconColor : 'text-slate-400'}`}>
                   {item.icon}
                 </div>
                 {item.name}
@@ -209,6 +220,7 @@ export default function App() {
             <Route path="/anime/:slug" element={<Detail />} />
             <Route path="/episode/:episodeId" element={<Watch />} />
             <Route path="/drama" element={<Drama />} />
+            <Route path="/tamat" element={<Tamat />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="/jadwal" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Jadwal Sedang Dikembangkan</div>} />
             <Route path="/trending" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Trending Sedang Dikembangkan</div>} />
@@ -218,4 +230,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-            
