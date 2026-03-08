@@ -66,9 +66,15 @@ export default function Detail() {
                 <span className="text-sm font-bold text-white">{anime.score}</span>
               </div>
             </div>
-            <button className="w-full mt-6 flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-400 hover:to-cyan-400 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105">
-              <Play fill="currentColor" size={20} /> Mulai Menonton
-            </button>
+            
+            {anime.episodeList && anime.episodeList.length > 0 && (
+              <Link 
+                to={`/episode/${anime.episodeList[anime.episodeList.length - 1].episodeId}`}
+                className="w-full mt-6 flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-400 hover:to-cyan-400 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-cyan-500/25 transition-all transform hover:scale-105"
+              >
+                <Play fill="currentColor" size={20} /> Mulai Menonton
+              </Link>
+            )}
           </motion.div>
 
           <motion.div 
@@ -145,19 +151,21 @@ export default function Detail() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {anime.episodeList?.map((eps) => (
-              <div key={eps.episodeId} className="group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:bg-white/10 hover:border-cyan-500/30 transition-all duration-300 cursor-pointer shadow-lg">
-                <div className="flex flex-col">
-                  <span className="text-white font-semibold text-sm mb-1 group-hover:text-cyan-400 transition-colors line-clamp-1">
-                    {eps.title}
-                  </span>
-                  <span className="text-xs text-slate-400 flex items-center gap-1">
-                    <CalendarDays size={12} /> {eps.date}
-                  </span>
+              <Link to={`/episode/${eps.episodeId}`} key={eps.episodeId}>
+                <div className="group flex items-center justify-between p-4 bg-slate-900 border border-white/5 rounded-xl hover:bg-white/10 hover:border-cyan-500/30 transition-all duration-300 cursor-pointer shadow-lg">
+                  <div className="flex flex-col">
+                    <span className="text-white font-semibold text-sm mb-1 group-hover:text-cyan-400 transition-colors line-clamp-1">
+                      {eps.title}
+                    </span>
+                    <span className="text-xs text-slate-400 flex items-center gap-1">
+                      <CalendarDays size={12} /> {eps.date}
+                    </span>
+                  </div>
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-cyan-500 transition-all duration-300 ml-4">
+                    <Play size={16} className="text-slate-300 group-hover:text-white ml-0.5" fill="currentColor" />
+                  </div>
                 </div>
-                <div className="w-10 h-10 shrink-0 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-cyan-500 transition-all duration-300 ml-4">
-                  <Play size={16} className="text-slate-300 group-hover:text-white ml-0.5" fill="currentColor" />
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -189,4 +197,4 @@ export default function Detail() {
       </main>
     </div>
   );
-}        
+}
