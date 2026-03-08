@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Bell, User, Menu, X, MonitorPlay, Clapperboard, CheckCircle2, LayoutGrid, Library } from 'lucide-react';
-import Home from './Home';
+
+// Mengimpor semua halaman
+import Home from './pages/Home';
 import Detail from './pages/Detail';
 import Drama from './pages/Drama';
+import DramaWatch from './pages/DramaWatch';
 import Watch from './pages/Watch';
 import SearchPage from './pages/Search';
 import Tamat from './pages/Tamat';
@@ -47,7 +50,6 @@ function Navbar() {
     }
   };
 
-  // Navigasi Bersih (Jadwal & Trending dihapus, Semua Anime ditambahkan)
   const navLinks = [
     { name: 'Home', path: '/', icon: <MonitorPlay size={20} /> },
     { name: 'Semua Anime', path: '/all', icon: <Library size={20} /> },
@@ -76,15 +78,26 @@ function Navbar() {
 
             <div className="hidden lg:flex items-center space-x-1 absolute left-1/2 transform -translate-x-1/2 bg-white/5 backdrop-blur-lg border border-white/10 px-3 py-2 rounded-full shadow-xl">
               {navLinks.map((item) => {
-                const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
+                // Logika Active State khusus
+                const isHome = item.path === '/';
+                const isActive = isHome ? location.pathname === '/' : location.pathname.startsWith(item.path);
                 
+                const isDrama = item.name === 'Drama';
+                const isTamat = item.name === 'Tamat';
+                const isGenres = item.name === 'Genres';
+                
+                let activeColorClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]';
+                if (isDrama) activeColorClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-fuchsia-400 border border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.15)]';
+                if (isTamat) activeColorClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30 shadow-[0_0_15px_rgba(34,197,94,0.15)]';
+                if (isGenres) activeColorClass = 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-400 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]';
+
                 return (
                   <Link
                     key={item.name}
                     to={item.path}
                     className={`text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-full flex items-center gap-2 ${
                       isActive 
-                        ? 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]' 
+                        ? activeColorClass
                         : 'text-slate-300 hover:text-white hover:bg-white/10 border border-transparent'
                     }`}
                   >
@@ -149,7 +162,26 @@ function Navbar() {
         <div className="flex flex-col space-y-4 flex-1 z-10 w-full">
           <p className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-1 px-2">Menu Utama</p>
           {navLinks.map((item) => {
-            const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/');
+            const isHome = item.path === '/';
+            const isActive = isHome ? location.pathname === '/' : location.pathname.startsWith(item.path);
+            
+            const isDrama = item.name === 'Drama';
+            const isTamat = item.name === 'Tamat';
+            const isGenres = item.name === 'Genres';
+
+            let activeClass = 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-cyan-500/50 shadow-[0_0_20px_rgba(34,211,238,0.15)]';
+            let iconColor = 'text-cyan-400';
+            
+            if (isDrama) {
+              activeClass = 'bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-white border border-fuchsia-500/50 shadow-[0_0_20px_rgba(217,70,239,0.15)]';
+              iconColor = 'text-fuchsia-400';
+            } else if (isTamat) {
+              activeClass = 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-white border border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.15)]';
+              iconColor = 'text-green-400';
+            } else if (isGenres) {
+              activeClass = 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-white border border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.15)]';
+              iconColor = 'text-orange-400';
+            }
 
             return (
               <Link
@@ -158,11 +190,11 @@ function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 text-lg font-bold px-6 py-4 rounded-2xl transition-all shadow-lg w-full ${
                   isActive 
-                    ? 'bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-cyan-500/50 shadow-[0_0_20px_rgba(34,211,238,0.15)]' 
+                    ? activeClass 
                     : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border border-white/10 backdrop-blur-md'
                 }`}
               >
-                <div className={`${isActive ? 'text-cyan-400' : 'text-slate-400'}`}>
+                <div className={`${isActive ? iconColor : 'text-slate-400'}`}>
                   {item.icon}
                 </div>
                 {item.name}
@@ -201,6 +233,7 @@ export default function App() {
             <Route path="/anime/:slug" element={<Detail />} />
             <Route path="/episode/:episodeId" element={<Watch />} />
             <Route path="/drama" element={<Drama />} />
+            <Route path="/drama/:bookId/:episodeId" element={<DramaWatch />} />
             <Route path="/tamat" element={<Tamat />} />
             <Route path="/genres" element={<Genres />} />
             <Route path="/genre/:genreId" element={<GenreDetail />} />
