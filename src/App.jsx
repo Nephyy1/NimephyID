@@ -9,6 +9,7 @@ import SearchPage from './pages/Search';
 import Tamat from './pages/Tamat';
 import Genres from './pages/Genres';
 import GenreDetail from './pages/GenreDetail';
+import Batch from './pages/Batch';
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -231,6 +232,7 @@ export default function App() {
             <Route path="/tamat" element={<Tamat />} />
             <Route path="/genres" element={<Genres />} />
             <Route path="/genre/:genreId" element={<GenreDetail />} />
+            <Route path="/batch/:batchId" element={<Batch />} />
             <Route path="/search/:query" element={<SearchPage />} />
             <Route path="/jadwal" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Jadwal Sedang Dikembangkan</div>} />
             <Route path="/trending" element={<div className="p-20 text-center text-xl text-slate-500">Halaman Trending Sedang Dikembangkan</div>} />
@@ -240,4 +242,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
-              
+    
