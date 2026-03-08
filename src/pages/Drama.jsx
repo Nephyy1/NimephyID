@@ -1,114 +1,178 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Play, Clapperboard, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Clapperboard, Search, Flame, Play, AlertCircle } from 'lucide-react';
 
 export default function Drama() {
   const [dramas, setDramas] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [titleSection, setTitleSection] = useState('Trending Saat Ini');
+
+  const fetchTrending = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('https://www.sankavollerei.com/anime/dramabox/trending');
+      const result = await response.json();
+      if (result.status === 'success' && result.data) {
+        setDramas(result.data);
+        setTitleSection('Trending Saat Ini');
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDramas = async () => {
-      try {
-        const response = await fetch('https://www.sankavollerei.com/anime/dramabox/latest?page=1');
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-          setDramas(result.data);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDramas();
+    fetchTrending();
     window.scrollTo(0, 0);
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center text-fuchsia-400 gap-4">
-        <div className="w-12 h-12 border-4 border-fuchsia-500/30 border-t-fuchsia-500 rounded-full animate-spin"></div>
-        <p className="font-semibold tracking-wide animate-pulse">Menghubungkan ke DramaBox...</p>
-      </div>
-    );
-  }
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) {
+      fetchTrending();
+      return;
+    }
+    
+    setIsSearching(true);
+    setIsLoading(true);
+    try {
+      const response = await fetch(`https://www.sankavollerei.com/anime/dramabox/search?q=${encodeURIComponent(searchQuery)}`);
+      const result = await response.json();
+      if (result.status === 'success' && result.data) {
+        setDramas(result.data);
+        setTitleSection(`Hasil Pencarian: "${searchQuery}"`);
+      } else {
+        setDramas([]);
+        setTitleSection(`Tidak ditemukan hasil untuk "${searchQuery}"`);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+      setIsSearching(false);
+    }
+  };
 
   return (
-    <div className="pb-24 selection:bg-fuchsia-500/30">
-      <section className="relative h-[40vh] md:h-[50vh] w-full flex items-center justify-center overflow-hidden mb-12">
-        <div className="absolute inset-0 w-full h-full">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-fuchsia-950/40"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-fuchsia-600/20 blur-[120px] rounded-full pointer-events-none"></div>
-        </div>
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 text-center px-4"
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-xs font-bold tracking-widest text-fuchsia-300 bg-fuchsia-500/10 border border-fuchsia-500/30 rounded-full backdrop-blur-md uppercase">
-            <Sparkles size={14} /> NimephyID Originals
-          </span>
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
-            Drama <span className="bg-gradient-to-r from-fuchsia-500 to-rose-500 bg-clip-text text-transparent">Asia</span> Terbaik
+    <div className="pb-24 pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-screen">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 border-b border-white/10 pb-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-black text-white mb-2 flex items-center gap-3">
+            <Clapperboard className="text-fuchsia-400" size={36} />
+            Drama Asia
           </h1>
-          <p className="text-slate-300 max-w-2xl mx-auto text-lg">
-            Jelajahi koleksi drama terbaru dengan kualitas premium. Dari romansa hingga aksi, temukan cerita favoritmu di sini.
+          <p className="text-slate-400">
+            Tonton ribuan koleksi drama pendek (Dramabox) terbaru dan terpopuler.
           </p>
-        </motion.div>
-      </section>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-        <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Clapperboard className="text-fuchsia-400" size={24} /> Rilis Terbaru
-          </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-          {dramas.map((drama, index) => (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              key={drama.bookId}
-            >
-              <Link to={`/drama/${drama.bookId}`}>
-                <div className="group relative rounded-2xl overflow-hidden bg-slate-900 shadow-xl shadow-slate-950/50 cursor-pointer border border-transparent hover:border-fuchsia-500/30 transition-all duration-500 flex flex-col h-full">
-                  <div className="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg px-2.5 py-1 flex items-center shadow-lg">
-                    <span className="text-xs font-bold text-fuchsia-300">{drama.total_episode}</span>
-                  </div>
+        <form onSubmit={handleSearch} className="relative w-full md:w-96 shrink-0">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search size={18} className="text-slate-400" />
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari drama CEO, Romantis..."
+            className="w-full bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-2xl pl-11 pr-24 py-3.5 focus:outline-none focus:border-fuchsia-500/50 focus:ring-1 focus:ring-fuchsia-500/50 text-white placeholder-slate-500 shadow-inner"
+          />
+          <button 
+            type="submit"
+            disabled={isSearching}
+            className="absolute inset-y-1.5 right-1.5 bg-fuchsia-500 hover:bg-fuchsia-400 text-white text-sm font-bold px-4 rounded-xl transition-colors disabled:opacity-50"
+          >
+            {isSearching ? 'Cari...' : 'Cari'}
+          </button>
+        </form>
+      </div>
 
-                  <div className="aspect-[3/4] relative w-full overflow-hidden shrink-0">
-                    <img 
-                      src={drama.cover} 
-                      alt={drama.judul} 
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-                    
+      <div className="flex items-center gap-2 mb-6">
+        <Flame className="text-fuchsia-400" size={24} />
+        <h2 className="text-2xl font-bold text-white">{titleSection}</h2>
+      </div>
+
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-32 text-fuchsia-400 gap-4">
+          <div className="w-12 h-12 border-4 border-fuchsia-500/30 border-t-fuchsia-500 rounded-full animate-spin"></div>
+          <p className="font-semibold tracking-wide animate-pulse">Menyiapkan Daftar Drama...</p>
+        </div>
+      ) : dramas.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+          {dramas.map((drama, index) => {
+            const isAvailable = drama.bookId !== null;
+            const CardContent = (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className={`group relative rounded-2xl overflow-hidden bg-slate-900 shadow-xl shadow-slate-950/50 border border-transparent transition-all duration-300 flex flex-col h-full ${
+                  isAvailable ? 'hover:border-fuchsia-500/30 cursor-pointer' : 'opacity-60 grayscale'
+                }`}
+              >
+                {drama.rank && (
+                  <div className="absolute top-2 left-2 z-10 bg-fuchsia-600 backdrop-blur-md border border-white/20 rounded-lg px-2.5 py-1 flex items-center gap-1 shadow-lg">
+                    <span className="text-xs font-black text-white">#{drama.rank}</span>
+                  </div>
+                )}
+                
+                <div className="absolute top-2 right-2 z-10 bg-black/60 backdrop-blur-md border border-white/10 rounded-lg px-2 py-1 shadow-lg">
+                  <span className="text-[10px] font-bold text-fuchsia-300 uppercase tracking-wider">{drama.total_episode}</span>
+                </div>
+
+                <div className="aspect-[3/4] relative w-full overflow-hidden shrink-0">
+                  <img src={drama.cover} alt={drama.judul} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+                  
+                  {isAvailable ? (
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="w-14 h-14 bg-fuchsia-500/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(217,70,239,0.5)] transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                        <Play fill="white" size={24} className="ml-1 text-white" />
+                      <div className="w-12 h-12 bg-fuchsia-500/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(217,70,239,0.5)] transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                        <Play fill="white" size={20} className="ml-1 text-white" />
                       </div>
                     </div>
-                  </div>
-
-                  <div className="flex-1 bg-white/5 backdrop-blur-sm border-t border-white/5 p-4 flex flex-col justify-between group-hover:bg-fuchsia-950/20 transition-colors duration-300">
-                    <h3 className="text-white font-bold text-sm leading-snug line-clamp-2 mb-3">
-                      {drama.judul}
-                    </h3>
-                    <div className="w-0 h-1 bg-gradient-to-r from-fuchsia-500 to-rose-500 group-hover:w-full transition-all duration-500 rounded-full mt-auto"></div>
-                  </div>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                       <span className="bg-red-500/90 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 backdrop-blur-md">
+                         <AlertCircle size={12} /> ID Error
+                       </span>
+                    </div>
+                  )}
                 </div>
+
+                <div className="flex-1 bg-white/5 backdrop-blur-sm p-4 flex flex-col justify-between group-hover:bg-fuchsia-950/20 transition-colors duration-300">
+                  <h3 className="text-white font-bold text-sm leading-tight line-clamp-2 mb-2">
+                    {drama.judul}
+                  </h3>
+                  <div className="w-0 h-1 bg-gradient-to-r from-fuchsia-500 to-rose-500 mt-auto group-hover:w-full transition-all duration-500 rounded-full"></div>
+                </div>
+              </motion.div>
+            );
+
+            return isAvailable ? (
+              <Link 
+                to={`/drama/${drama.bookId}/1`} 
+                key={index}
+                state={{ title: drama.judul }} // Mengirim judul ke halaman Watch
+              >
+                {CardContent}
               </Link>
-            </motion.div>
-          ))}
+            ) : (
+              <div key={index}>{CardContent}</div>
+            );
+          })}
         </div>
-      </main>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <Clapperboard size={64} className="text-slate-600 mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Drama tidak ditemukan</h2>
+          <p className="text-slate-400">Coba gunakan kata kunci pencarian yang lain.</p>
+        </div>
+      )}
     </div>
   );
 }
